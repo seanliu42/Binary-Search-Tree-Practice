@@ -1,0 +1,207 @@
+                        CS15 HW3 Binary Search Trees
+                        
+                               by Sean Liu
+                              
+                              Program Purpose
+                              
+Creating this program familiarizes us with the the finite map abstract data 
+type, and teaches us how to implement a BST that supports a multiset/bag.
+
+                             Acknowledgements
+                             
+Thank you to Jason Wu for working with me to test edge cases and catch valgrind
+errors. Thank you to the TAs who helped me debug my insert and remove function 
+during office hours.
+
+                                   Files
+                                   
+hw3.cpp: Hosts the implementation of this program which serve as instructions
+         for the computer to execute. Serves as the driver for the program.
+
+BinarySearchTree.cpp: Hosts the implementation of the binary search tree class 
+                      and its functions. Gives instructions to the hw3
+                      program when it calls the BST functions from the header
+                      file.
+
+BinarySearchTree.h: Hosts the declaration my binary search tree class and its 
+                    functions. Linked in hw3.cpp to call the functions 
+                    necessary to run the hw3 program.
+                    
+README: This file. Provides detailed information to the logic and process
+        behind creating this program.
+        
+Makefile: Contains the commands that link compile all of the pieces needed for
+          this program. Provides an efficient way to compile this program. 
+          
+unit_tests.h: Hosts the implementation of my tests for the functionality of the
+              BST and its functions. Ensures my BST and its functions are 
+              working properly.
+              
+                                  Testing
+                                  
+To test my constructor, I simply created a binary search tree and let valgrind
+tell me if there were any data errors. Straightforward stuff, no issues here.
+
+
+To test my copy constructor, I created a binary search tree and populated it
+with random integers. Then I called the copy constructor. I printed both trees
+on top of one another, and visually inspected for any differences. There were
+none, telling me my copy constructor works fine.
+
+To test my assignment operator overload, I printed the two BSTs from the copy 
+constructor test. Then I created a third BST without populating it, set it 
+equal to the first BST, and printed it. I compared all three trees and
+confirmed that all were identical.
+                                  
+To test my find_min function, I created a binary search tree and inserted an
+assortment of random integers. Then I called find_min and printed its 
+results, which correctly showed the smallest integer I entered. I also called
+it on an empty tree, but this code was given to us so I was not particularly
+concerned about its correctness.
+
+I tested my find_max function in the same way. I created a BST and populated
+it with the same assortment of integers, then called find_max and printed
+the result. This function was simple, so there were no issues here. This time 
+I paid more attention to its result when calling it on an empty BST to ensure
+that the result matched the spec, which it did.
+
+To test my node_count function, I created an empty BST and printed its result
+for reference. Then I populated the BST, called node_count again, printed its
+result, and compared the two results. They should be different, and the
+difference should equal the amount of insertions I did.
+
+To test my contains function, I created an empty BST and inserted an element
+into it. Then I called contains, and created a conditional that would print
+failure if contains was false, and success otherwise.
+
+To test my tree_height function, I created an empty BST and printed its initial
+height. Then I populated the BST with random elements, and printed the new
+height. I drew out the BST on paper, counted the edges, then compared that
+count to the print statement. 
+
+I used the same test design as tree_height for count_total, but instead of 
+counting edges I just summed the data values of the BST and compared that total
+to the print statement.
+
+To test remove, I drew several BSTs on paper that I wanted to test. First, I
+created a BST just consisting of a root with no children, removed it, then 
+checked for valgrind errors. I ran into trouble trying to insert and remove 
+elements into a BST with for loops, which I initually wanted to use for 
+convenience during testing. The trouble was because I did not have a special 
+case to handle when a parent was null. So while my program worked for children,
+it did not work fully for roots. To fix this, I added a conditional in my 
+helper functions to check if the parent was null pointer, which manually set 
+root to the replacement node instead of recursively calling functions which 
+require a non-null parent as a parameter. After fixing that, I made a mega test
+function which tested as many unique removals I could think of. Such as removal
+of the root, removing duplicates, removing leafs, removing elements with a 
+single child, and removing elements with two children which need to be 
+replaced by either the greatest value of the left subtree or the smallest value
+in the right subtree. At first I tried to implement my removeTwoChildren 
+function by using temp to hold the children of the deleted node, but I was
+getting segmentation faults. I figured this method was too confusing to keep
+track of data, so instead I used the find_min function find the replacement 
+node and put it in the spot of the deleted node. I forgot to call delete
+on the replacement node after making the replacement at first, but I quickly
+remembered to make simply call remove recursively. I also had troubles with my 
+one child removals, despite initially working, which made me realize that I was
+failing to update the parent pointers consistently. Sometimes the program knew
+where to put the children, but most of the time they got lost. Once I figured
+out what conditionals to create in order to hand off the children to the parent
+node, I was inspired to test these improved functions which led me to make the
+4 directional tests. These all had the same BST, but I removed each part of it
+separately to make sure my program reorganized it correctly.
+
+Last but not least, I diff tested my output with the reference output!
+
+                              Data Structures
+                              
+The data structure we used in this assignment was a binary search tree.
+These are trees where each node has a maximum of 2 children, a left and right
+child. These are used to map a collection of key, value pairs. In this 
+assignment, the nodes served as keys and the nodes' data stored our integer
+values. This is the behavior of the finite map abstract data type, which can
+be observed in student databases, dictionaries, even a street map. BSTs are
+great for finite maps because it is quick to look for, insert, and delete
+elements. 
+
+In layman's terms, trees are a collection of things that point to other things.
+Each thing, holds something. Think about your money. Let's say your house is 
+the root of the tree. You store around $200 dollars in cash at home. Your home 
+stores your wallet or purse. These are smaller things and hold smaller amounts 
+of money, maybe $20 dollars. However, you can also find bigger things to store 
+your money in, such as banks. There, you would store anything upward of the 
+$200 dollars you keep at home. These are all individual things that store 
+money, but ultimately they are all related, both in size and in connection. 
+A smart person's tree would be binary, making sure that they have a clear trail
+of where they keep their money by reducing the amount of things that hold their
+money. For example, I'd keep some change in my pant pockets and more cash in my
+wallet. These would stay in my house. If I needed more money, I could past my
+house to the bank. At the bank, I would have a smaller checking account and a
+bigger savings account. 
+
+                                Algorithms
+
+I have implemented an algorithm for inserting elements into a linked list 
+before, which is similar to a binary search tree, but specifically never for a 
+BST. It was really tricky keeping track of all of the pointers, and I often
+got the node and parent parameters confused; however, through this I assignment
+I began to visualize the tree more and more and started to remember which
+pointers needed to be updated when. When you are deleting a node, you need to
+ensure that node did not hold more parts of the tree that would be lost. If it
+does not, just delete it. This will turn its parent into a leaf. If it does,
+make sure you hand those children over to the parent, otherwise they will get
+lost. I kept assuming that the children would automatically bind to the parent,
+but I guess children are dumb and you have to hand them over yourself. The same
+goes for remove, the basic concept is simple; yet, all of the pointers
+get overwhelming. As I mentioned in my testing section, I was not familiar with
+checking and updating the parent node. Now, I understand. In short, children
+must be supervised at all times. Otherwise they will be lost, and the family
+will not function well.
+
+                             Written Questions
+
+1) Review the remove function explanation in the homework specification. 
+   Will your implementation of the remove function use (the privately defined)
+   find_min() or find_max()? Why?
+   
+My implementation will use find_min() because I want to match the reference
+implementation as close as possible. When deleting a node that has two
+children, it replaces it with the smallest value in the right subtree. To do
+this, I will call find_min() on the tree's right subtree to get the value that
+will replace the deleted node's value.
+   
+2) Is it possible for (the privately defined) find_min() or find_max() to
+   return a value that does not point to a valid node? Why or why not?
+   
+Yes it is possible for find_min() or find_max() to return a value that does not
+point to a valid node. Since null/empty trees are valid binary search trees, 
+there is a minimum and a maximum despite not having nodes with specific values.
+   
+3a) If you answered yes to 2, then what value is returned? In what case will
+    that value be returned? 
+
+The value returned for find_min() is 2147483647. The value for find_max() is
+-2147483648. These values are returned when the functions are called on an
+empty tree, where root equals nullptr.
+
+4. find_min() pseudocode:
+
+If the left subtree is empty, return the current (root) value.
+Otherwise, call find_min on the left subtree.
+    
+5. find_max() pseudocode:
+
+If the right subtree is empty, return the current (root) value.
+Otherwise, call find_max on the right subtree.
+
+6. post_order_delete() pseudocode
+
+If the tree already null, return.
+Recursively delete nodes traversing left.
+Recursively delete nodes traversing right.
+Delete the current node.
+
+                                  Time Spent
+                                  
+15 hours
